@@ -62,6 +62,7 @@
 
 
 <script>
+
     document.getElementById('eventForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -131,6 +132,23 @@ END:VCALENDAR`;
         // Optionally, you can provide feedback to the user
         alert('Event URL copied to clipboard!');
     }
+
+
+    function postevent() {
+        fetch('http://127.0.0.1:3000/index.html', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(icsContent),
+            })
+            consol
+        return response.json();
+
+        }
+
+postevent();
+
 </script>
 
 
