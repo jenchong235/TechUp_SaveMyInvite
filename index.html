@@ -59,33 +59,42 @@
 </div>
 </div>
 
+
+
 <script>
     document.getElementById('eventForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
         // Get form values
         const eventTitle = document.getElementById('eventTitle').value;
-        const startDate = document.getElementById('startDate').value;
-        const startTime = document.getElementById('startTime').value;
-        const endDate = document.getElementById('endDate').value;
-        const endTime = document.getElementById('endTime').value;
+        var startDate = document.getElementById('startDate').value;
+        startDate = startDate.replace(/-/g,"");
+        var startTime = document.getElementById('startTime').value;
+        startTime = startTime.replace(/:/g,"");
+        startTime = startTime+"00";
+        var endDate = document.getElementById('endDate').value;
+        endDate = endDate.replace(/-/g,"");
+        var endTime = document.getElementById('endTime').value;
+        endTime = endTime.replace(/:/g,"");
+        endTime = endTime+"00";
         const location = document.getElementById('location').value;
         const description = document.getElementById('description').value;
 
         // Create iCalendar (ICS) content
         const icsContent = 
         `BEGIN:VCALENDAR
-        VERSION:2.0
-        BEGIN:VEVENT
-        CLASS:PUBLIC
-        DESCRIPTION:${description}
-        DTSTART:${startDate}T${startTime}
-        DTEND:${endDate}T${endTime}
-        LOCATION:${location}
-        SUMMARY:${eventTitle}
-        END:VEVENT
-        END:VCALENDAR`;
-
+VERSION:2.0
+PRODID:github.com/jenchong235
+BEGIN:VEVENT
+UID:event${eventTitle}
+CLASS:PUBLIC
+DESCRIPTION:${description}
+DTSTART:${startDate}T${startTime}
+DTEND:${endDate}T${endTime}
+LOCATION:${location}
+SUMMARY:${eventTitle}
+END:VEVENT
+END:VCALENDAR`;
 
         // Create a blob and download the file
         const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
@@ -102,6 +111,7 @@
 
         // Show the display area for URL
         document.getElementById('blobUrlDisplay').style.display = 'block';
+        
 
     });
 
