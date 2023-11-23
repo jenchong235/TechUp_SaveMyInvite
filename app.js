@@ -8,6 +8,8 @@ require('dotenv').config();
 // Create the app 
 const app = express(); 
 app.set("view engine", "ejs");
+app.engine('html', require('ejs').renderFile);
+app.set("view engine", "html");
 app.use(bodyParser.json()); 
 
 
@@ -42,7 +44,7 @@ app.use(async (req, res, next) => {
   next();
   });
 
-//Render index.ejs 
+//Render index.ejs / Route handler
 app.get("/", async (req, res, next) => {
   res.render("index");
   next();
