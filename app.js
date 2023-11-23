@@ -1,21 +1,22 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require("express");
-var bodyParser = require('body-parser');
+const { uuid } = require('uuidv4');
+const bodyParser = require('body-parser');
 const port = 3000;
 require('dotenv').config();
 
-// 2. Create the app 
+// Create the app 
 const app = express(); 
-// app.set("view engine", "ejs");
-app.use(express.urlencoded({ extended: true })); //Add middleware to app's request handling pipeline & parse URL-encoded data like data structures/arrays into requesst body. This allows data sent from HTML forms in Express.js to be accessed as JavaScript objects for further processing. 
-app.use(express.static("public")); //This serves static files like HTML, CSS, JS from a directory named "public" to the client-side of a web app, so static files can be accessed by users' web browsers 
-app.use(bodyParser.json());
+app.set("view engine", "ejs");
+app.use(bodyParser.json()); 
 
-// 3. Connect to the specific URI you copied over just now
-const uri = process.env.MONGODB_URI; //Allows the web app to access the environment variable aka the secret URL with your MongoDB username and password via `process.env.MONGODB_URI`. URI basically means URL. 
+
+// Connect to the specific URI 
+const uri = process.env.MONGODB_URI; 
 console.log(uri);
-// 4. Create a new MongoClient i.e. way to facilitate data transmission 
-const client = new MongoClient(uri, { //Creates a constant variable named `client` to connect to MongoDB server, taking the `uri` parameter for the MongoDB server 
+
+// Create a new MongoClient
+const client = new MongoClient(uri, { 
     serverApi: {
       version: ServerApiVersion.v1,
       strict: true,
@@ -23,45 +24,42 @@ const client = new MongoClient(uri, { //Creates a constant variable named `clien
     }
   });
 
-// 5. Connect to the MongoDB server and let you know if you have successfully connected to the server
+// Connect to the MongoDB server
 async function connect() {
     try {
       console.log("Attempting to connect to MongoDB");
       await client.connect();
       console.log("Connected to MongoDB")
-      return client.db("savemyinvite");
+      return client.db("savemyinviteDB");
     } catch (err) {
       console.error("Error:", err);
     } 
-  }
+  };
 
-  app.use(async (req, res, next) => {
-    // Establish the MongoDB connection and attach the database object to the request
-    req.db = await connect();
-    next();
+//Allow MongoDB connection to be used in rest of app.js
+app.use(async (req, res, next) => {
+  req.db = await connect();
+  next();
   });
 
-  app.get("/", async (req, res) => {
-    console.log("app.get")
-  });
+//Render index.ejs 
+app.get("/", async (req, res, next) => {
+  res.render("index");
+  next();
+});
 
-// POST ICS file data fields to MongoDB
-    app.post('/', async (req, res) => {
-        const icsData = req.body;
-        const fileId = uuidv4();
-        const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
+//Ingest invite details to MongoDB when form is submitted
+app.post("/", async (req, res) => {
     try {
-        await client.connect();
-
-        const database = client.db(savemyinvite);
-        const collection = database.collection(invitedetail);
-
+        const icsData = req.body.icsData;
+        const fileId = uuid();
+        console.log(fileId, icsData);
+        const database = client.db("savemyinviteDB");
+        const collection = database.collection("invitedetail");
         await collection.insertOne({ _id: fileId, data: icsData });
-
         res.json({ fileId });
 
-        console.log("posted successfully");
+        console.log("Inserted to mongoDB successfully");
 
     } finally {
         await client.close();
@@ -69,7 +67,7 @@ async function connect() {
  });
 
   
-// 8. Start the Express.js server and listen on a specific port:
+//Start the Express.js server and listen on a specific port:
 app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });

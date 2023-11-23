@@ -8,9 +8,12 @@
 </head>
 <body>
 <br />
+
 <div class="container">
+    
     <h2 style="text-align: center; margin-bottom: 30px; margin-top: 30px;">Create your invitation</h2>
-    <form id="eventForm">
+    
+    <form id="eventForm" action="/" method="post">
         <div class="form-group mb-3">
             <label for="eventTitle">Event Title:</label>
             <input type="text" class="form-control" id="eventTitle" placeholder ="Input your event title" required>
@@ -97,6 +100,15 @@ SUMMARY:${eventTitle}
 END:VEVENT
 END:VCALENDAR`;
 
+        const response = fetch('/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ icsData: icsContent }),
+        });
+
+
         // Create a blob and download the file
         const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
         const link = document.createElement('a');
@@ -133,21 +145,6 @@ END:VCALENDAR`;
         alert('Event URL copied to clipboard!');
     }
 
-
-    function postevent() {
-        fetch('http://127.0.0.1:3000/index.html', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(icsContent),
-            })
-            consol
-        return response.json();
-
-        }
-
-postevent();
 
 </script>
 
