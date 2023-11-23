@@ -1,8 +1,8 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require("express");
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 const port = 3000;
-require('dotenv').config()
+require('dotenv').config();
 
 // 2. Create the app 
 const app = express(); 
@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 // 3. Connect to the specific URI you copied over just now
 const uri = process.env.MONGODB_URI; //Allows the web app to access the environment variable aka the secret URL with your MongoDB username and password via `process.env.MONGODB_URI`. URI basically means URL. 
-
+console.log(uri);
 // 4. Create a new MongoClient i.e. way to facilitate data transmission 
 const client = new MongoClient(uri, { //Creates a constant variable named `client` to connect to MongoDB server, taking the `uri` parameter for the MongoDB server 
     serverApi: {
@@ -34,6 +34,16 @@ async function connect() {
       console.error("Error:", err);
     } 
   }
+
+  app.use(async (req, res, next) => {
+    // Establish the MongoDB connection and attach the database object to the request
+    req.db = await connect();
+    next();
+  });
+
+  app.get("/", async (req, res) => {
+    console.log("app.get")
+  });
 
 // POST ICS file data fields to MongoDB
     app.post('/', async (req, res) => {
