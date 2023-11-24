@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require("express");
-const { uuid } = require('uuidv4');
+const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
 const port = 3000;
 require('dotenv').config();
@@ -8,14 +8,11 @@ require('dotenv').config();
 // Create the app 
 const app = express(); 
 app.set("view engine", "ejs");
-app.engine('html', require('ejs').renderFile);
-app.set("view engine", "html");
 app.use(bodyParser.json()); 
 
 
 // Connect to the specific URI 
-const uri = process.env.MONGODB_URI; 
-console.log(uri);
+const uri = process.env.MONGODB_URI;
 
 // Create a new MongoClient
 const client = new MongoClient(uri, { 
@@ -44,31 +41,75 @@ app.use(async (req, res, next) => {
   next();
   });
 
-//Render index.ejs / Route handler
+//Render index.ejs view + temporary value for eventurl
 app.get("/", async (req, res, next) => {
-  res.render("index");
+  var eventurl = "default";
+  res.render("index", { eventurl });
   next();
 });
 
-//Ingest invite details to MongoDB when form is submitted
+//Ingest invite details to MongoDB when form is submitted + Generate eventurl to pass to index.ejs
 app.post("/", async (req, res) => {
-    try {
-        const icsData = req.body.icsData;
-        const fileId = uuid();
-        console.log(fileId, icsData);
-        const database = client.db("savemyinviteDB");
-        const collection = database.collection("invitedetail");
-        await collection.insertOne({ _id: fileId, data: icsData });
-        res.json({ fileId });
 
-        console.log("Inserted to mongoDB successfully");
+  const fileId = uuidv4();
+  const icsData = req.body.icsData;
+  const icsBlob = btoa(icsData);
+  console.log(fileId, icsBlob);
+  const database = client.db("savemyinviteDB");
+  const collection = database.collection("invitedetail");
+  await collection.insertOne({ _id: fileId, data: icsBlob });
+  console.log("Inserted to mongoDB successfully");
 
-    } finally {
-        await client.close();
-    }
+  var eventurl = "http://localhost:"+port+"/event/"+fileId ;
+  res.render("index", { eventurl });
+  console.log(eventurl);
+
  });
 
+
+// Route to get ics data from MongoDB, generate new blob and download file
+
+app.get('/event/:eventId', async (req, res) => {
+  const eventId = req.params.eventId;
+
+  // Fetch ICS data from MongoDB based on the event ID
+  const database = client.db('savemyinviteDB');
+  const collection = database.collection('invitedetail');
+  const event = await collection.findOne(
+    { _id: eventId },
+    { projection: { _id: 0, data: 1 } }
+  );
+
+  if (!event) {
+    console.log("EventID not in database");  
+    return res.status(404).send('Event not found');
+  }
+  console.log(event);
+  const extractevent = event.data.replace(/.*'([^']*)'.*/, '$1');
+  console.log(extractevent);
+  const eventstring = atob(extractevent);
+  console.log(eventstring);
   
+  const match = eventstring.match(/SUMMARY:(.*)/);
+  const eventName = match ? match[1].trim() : null;
+  console.log(eventName);
+
+  const blob = new Blob([eventstring], { type: 'text/calendar;charset=utf-8' });
+
+  // Set headers for file download
+  res.setHeader('Content-Type', 'text/calendar');
+  res.setHeader('Content-Disposition', "attachment; filename="+eventName+".ics");
+
+  // Convert Blob to buffer
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  // Send the buffer as the response
+  res.end(buffer);
+});
+
+
+
+
 //Start the Express.js server and listen on a specific port:
 app.listen(port, () => {
       console.log(`Server running on port ${port}`);

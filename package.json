@@ -5,6 +5,7 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "mongodb": "^6.3.0",
+    "uuid": "^9.0.1",
     "uuidv4": "^6.2.13"
   },
   "name": "techup_savethedate_jialing",
@@ -16,6 +17,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
   "description": ""
 }

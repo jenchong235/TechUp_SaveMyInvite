@@ -50,11 +50,12 @@
     </form>
 </div>
 
-<!-- Display area for URL (NEED TO CHANGE TO ACTUAL URL THAT CAN BE SHARED)-->
-<div id="blobUrlDisplay" class="m-4" style="display: none;">
+<!-- Display area for URL -->
+<div id="UrlDisplay" class="m-4">
     <h4 style = "text-align: center;">Event URL:</h4>
+    <p> <%= eventurl %> </p>
     <div class="input-group">
-        <input type="text" id="blobUrl" class="form-control" readonly>
+        <span id="url" class="input-group-text"contenteditable="true"><%= eventurl %></span> <!-- eventurl returned from app.js-->
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" onclick="copyUrl()">Copy</button>
         </div>
@@ -118,33 +119,28 @@ END:VCALENDAR`;
         link.click();
         document.body.removeChild(link);
 
-        const blobUrl = window.URL.createObjectURL(blob);
-        const blobUrlInput = document.getElementById('blobUrl');
-        blobUrlInput.value = blobUrl;
-
         // Show the display area for URL
-        document.getElementById('blobUrlDisplay').style.display = 'block';
+        // document.getElementById('UrlDisplay').style.display = 'block';
         
 
     });
 
+ 
+    // Function to copy URL
+
     function copyUrl() {
-        const blobUrlInput = document.getElementById('blobUrl');
+        
+        var urlText = document.getElementById("url").textContent;
+        var tempTextarea = document.createElement('textarea');
+        tempTextarea.value = urlText;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        tempTextarea.setSelectionRange(0, 99999); /* For mobile devices */
 
-        // Select the text in the input field
-        blobUrlInput.select();
-        blobUrlInput.setSelectionRange(0, 99999); // For mobile devices
-
-        // Copy the text to the clipboard
         document.execCommand('copy');
-
-        // Deselect the text
-        blobUrlInput.setSelectionRange(0, 0);
-
-        // Optionally, you can provide feedback to the user
+        document.body.removeChild(tempTextarea);
         alert('Event URL copied to clipboard!');
     }
-
 
 </script>
 
