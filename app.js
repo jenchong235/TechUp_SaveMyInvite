@@ -2,7 +2,6 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require("express");
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
-const port = 3000;
 require('dotenv').config();
 
 // Create the app 
@@ -109,7 +108,7 @@ app.get('/event/:eventId', async (req, res) => {
 
 
 
-//Start the Express.js server and listen on a specific port:
-app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
+let port = process.env.PORT || 3000;
+app.listen(port, function () {
+  console.log(`Server started on port ${port}`);
+});
