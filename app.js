@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 
 // Connect to the specific URI 
-const uri = "mongodb+srv://jenchong235:GrgBoGEtxCwQstf3@savemyinvitedb.yiv2f5g.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI;
 
 // Create a new MongoClient
 const client = new MongoClient(uri, { 
@@ -59,7 +59,7 @@ app.post("/submit", async (req, res) => {
   await collection.insertOne({ _id: fileId, data: icsBlob });
   console.log("Inserted to mongoDB successfully");
 
-  var eventurl = "http://localhost:"+port+"/event/"+fileId ;
+  var eventurl = "https://https://savemyinvite-6dc47796a72d.herokuapp.com/event/"+fileId ;
   console.log(eventurl);
   res.send(eventurl)
  });
