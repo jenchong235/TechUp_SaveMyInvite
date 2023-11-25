@@ -41,7 +41,7 @@ app.use(async (req, res, next) => {
   });
 
 //Render index.ejs view + temporary value for eventurl
-app.get("/index", async (req, res, next) => {
+app.get("/", async (req, res, next) => {
   var eventurl = "default";
   res.render("index", { eventurl });
   next();
