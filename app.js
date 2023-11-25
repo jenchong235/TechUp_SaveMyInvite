@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 
 // Connect to the specific URI 
-const uri = process.env.MONGODB_URI;
+const uri = "mongodb+srv://jenchong235:GrgBoGEtxCwQstf3@savemyinvitedb.yiv2f5g.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a new MongoClient
 const client = new MongoClient(uri, { 
