@@ -49,7 +49,7 @@ app.get("/", async (req, res, next) => {
 });
 
 //Ingest invite details to MongoDB when form is submitted + Generate eventurl to pass to index.ejs
-app.post("/", async (req, res) => {
+app.post("/submit", async (req, res) => {
 
   const fileId = uuidv4();
   const icsData = req.body.icsData;
@@ -61,9 +61,8 @@ app.post("/", async (req, res) => {
   console.log("Inserted to mongoDB successfully");
 
   var eventurl = "http://localhost:"+port+"/event/"+fileId ;
-  res.render("index", { eventurl });
   console.log(eventurl);
-
+  res.send(eventurl)
  });
 
 

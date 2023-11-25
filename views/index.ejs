@@ -13,7 +13,7 @@
     
     <h2 style="text-align: center; margin-bottom: 30px; margin-top: 30px;">Create your invitation</h2>
     
-    <form id="eventForm" action="/" method="post">
+    <form id="eventForm" action="" method="post">
         <div class="form-group mb-3">
             <label for="eventTitle">Event Title:</label>
             <input type="text" class="form-control" id="eventTitle" placeholder ="Input your event title" required>
@@ -53,9 +53,8 @@
 <!-- Display area for URL -->
 <div id="UrlDisplay" class="m-4">
     <h4 style = "text-align: center;">Event URL:</h4>
-    <p> <%= eventurl %> </p>
     <div class="input-group">
-        <span id="url" class="input-group-text"contenteditable="true"><%= eventurl %></span> <!-- eventurl returned from app.js-->
+        <span id="icslink" class="input-group-text"> </span> <!-- eventurl returned from app.js-->
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" onclick="copyUrl()">Copy</button>
         </div>
@@ -101,14 +100,24 @@ SUMMARY:${eventTitle}
 END:VEVENT
 END:VCALENDAR`;
 
-        const response = fetch('/', {
+        const response = fetch('/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ icsData: icsContent }),
-        });
-
+        }).then((response) => {
+    // Our handler throws an error if the request did not succeed.
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+    // Otherwise (if the response succeeded), our handler fetches the response
+    // as text by calling response.text(), and immediately returns the promise
+    // returned by `response.text()`.
+    return response.text();
+  }).then((text) => {
+    document.getElementById('icslink').innerHTML = text
+  })
 
         // Create a blob and download the file
         const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
@@ -130,7 +139,7 @@ END:VCALENDAR`;
 
     function copyUrl() {
         
-        var urlText = document.getElementById("url").textContent;
+        var urlText = document.getElementById("icslink").textContent;
         var tempTextarea = document.createElement('textarea');
         tempTextarea.value = urlText;
         document.body.appendChild(tempTextarea);
