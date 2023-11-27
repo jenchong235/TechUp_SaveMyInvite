@@ -7,8 +7,7 @@ require('dotenv').config();
 // Create the app 
 const app = express(); 
 app.set("view engine", "ejs");
-app.use(bodyParser.json()); 
-
+app.use(bodyParser.json());
 
 // Connect to the specific URI 
 const uri = process.env.MONGODB_URI;
@@ -40,10 +39,10 @@ app.use(async (req, res, next) => {
   next();
   });
 
-//Render index.ejs view + temporary value for eventurl
+//Render index.ejs view
 app.get("/", async (req, res, next) => {
   var eventurl = "default";
-  res.render("index", { eventurl });
+  res.render("index");
   next();
 });
 
