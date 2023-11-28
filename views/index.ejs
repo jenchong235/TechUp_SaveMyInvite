@@ -11,6 +11,8 @@
     gtag('config', 'G-09B4QEMYBC');
     </script>
 
+    <!-- Open graph tags-->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -148,10 +150,17 @@ END:VCALENDAR`;
     // If the response succeeded, handler fetches the response and return by `response.text()`.
     return response.text();
   }).then((text) => {
-   // document.getElementById('icslink').innerHTML = text
-        const UrlInput = document.getElementById('icslink');
+        var UrlInput = document.getElementById('icslink');
+        // UrlInput.textContent = text;
+        // console.log("textcontent "+UrlInput.textContent);
+        // UrlInput.innerText = text;
+        // console.log("innerText "+UrlInput.innerText);
         UrlInput.value = text;
-  })
+        console.log("value "+UrlInput.value);
+        var event = new Event('change');
+        UrlInput.dispatchEvent(event);
+        }
+  );
 
         // Create a blob and download the file
         const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
@@ -172,16 +181,11 @@ END:VCALENDAR`;
     // Function to copy URL
 
     function copyUrl() {
-        
-        var urlText = document.getElementById("icslink").textContent;
-        var tempTextarea = document.createElement('textarea');
-        tempTextarea.value = urlText;
-        document.body.appendChild(tempTextarea);
-        tempTextarea.select();
-        tempTextarea.setSelectionRange(0, 99999); /* For mobile devices */
-
+        const urltext= document.getElementById("icslink");
+        urltext.select();
+        urltext.setSelectionRange(0, 99999); /* For mobile devices */
         document.execCommand('copy');
-        document.body.removeChild(tempTextarea);
+        urltext.setSelectionRange(0,0);
         alert('Invite URL copied to clipboard!');
     }
 
