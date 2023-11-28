@@ -148,7 +148,9 @@ END:VCALENDAR`;
     // If the response succeeded, handler fetches the response and return by `response.text()`.
     return response.text();
   }).then((text) => {
-    document.getElementById('icslink').innerHTML = text
+   // document.getElementById('icslink').innerHTML = text
+        const UrlInput = document.getElementById('icslink');
+        UrlInput.value = text;
   })
 
         // Create a blob and download the file
