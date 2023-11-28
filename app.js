@@ -58,14 +58,14 @@ app.post("/submit", async (req, res) => {
   await collection.insertOne({ _id: fileId, data: icsBlob });
   console.log("Inserted to mongoDB successfully");
 
-  var eventurl = "https://savemyinvite.app/newinvite/"+fileId ;
+  var eventurl = "https://savemyinvite.app/newevent/"+fileId ;
   console.log(eventurl);
   res.send(eventurl)
  });
 
 
 // Route to get ics data from MongoDB, generate new blob and download file
-app.get('/event/:eventId', async (req, res) => {
+app.get('/newevent/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 
   const database = client.db('savemyinviteDB');
