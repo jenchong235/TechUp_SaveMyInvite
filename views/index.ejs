@@ -105,12 +105,13 @@
 
 </footer>
 
+
 <script>
 
+// Create event invite from submitted form 
     document.getElementById('eventForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
-        // Get form values
         const eventTitle = document.getElementById('eventTitle').value;
         var startDate = document.getElementById('startDate').value;
         startDate = startDate.replace(/-/g,"");
@@ -125,7 +126,7 @@
         const location = document.getElementById('location').value;
         const description = document.getElementById('description').value;
 
-        // Create iCalendar (ICS) content
+        // Create ics content
         const icsContent = 
         `BEGIN:VCALENDAR
 VERSION:2.0
@@ -141,6 +142,7 @@ SUMMARY:${eventTitle}
 END:VEVENT
 END:VCALENDAR`;
 
+        // Use fetch for POST request with ics content, and update invite URL from response  
         const response = fetch('/submit', {
             method: 'POST',
             headers: {
@@ -148,18 +150,12 @@ END:VCALENDAR`;
             },
             body: JSON.stringify({ icsData: icsContent }),
         }).then((response) => {
-    // Handler throws an error if the request did not succeed.
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
     }
-    // If the response succeeded, handler fetches the response and return by `response.text()`.
     return response.text();
   }).then((text) => {
         var UrlInput = document.getElementById('icslink');
-        // UrlInput.textContent = text;
-        // console.log("textcontent "+UrlInput.textContent);
-        // UrlInput.innerText = text;
-        // console.log("innerText "+UrlInput.innerText);
         UrlInput.value = text;
         console.log("value "+UrlInput.value);
         var event = new Event('change');
@@ -167,7 +163,7 @@ END:VCALENDAR`;
         }
   );
 
-        // Create a blob and download the file
+        // Create a blob with ics content to download
         const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
@@ -176,15 +172,14 @@ END:VCALENDAR`;
         link.click();
         document.body.removeChild(link);
 
-        // Show the display area for URL
+        // Show the display area for invite URL
         document.getElementById('UrlDisplay').style.display = 'block';
         
 
     });
 
  
-    // Function to copy URL
-
+//Copy URL function
     function copyUrl() {
         const urltext= document.getElementById("icslink");
         urltext.select();
@@ -197,7 +192,7 @@ END:VCALENDAR`;
 </script>
 
 <script>
-    // Smooth scrolling for anchor links
+// Smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
