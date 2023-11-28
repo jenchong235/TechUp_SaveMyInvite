@@ -58,7 +58,7 @@ app.post("/submit", async (req, res) => {
   await collection.insertOne({ _id: fileId, data: icsBlob });
   console.log("Inserted to mongoDB successfully");
 
-  var eventurl = "https://savemyinvite.app/event/"+fileId ;
+  var eventurl = "https://savemyinvite.app/newinvite/"+fileId ;
   console.log(eventurl);
   res.send(eventurl)
  });
