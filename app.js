@@ -33,7 +33,7 @@ async function connect() {
     } 
   };
 
-// Allow MongoDB connection to be used in rest of app.js
+// Allow MongoDB connection to be used in other middleware in app.js
 app.use(async (req, res, next) => {
   req.db = await connect();
   next();
@@ -46,7 +46,7 @@ app.get("/", async (req, res, next) => {
   next();
 });
 
-// Route to ingest invite details to MongoDB when form is submitted + Generate eventurl to pass to index.ejs
+// Route to insert new record to MongoDB when form is submitted (POST request) + Generate invite url to send in response
 app.post("/submit", async (req, res) => {
 
   const fileId = uuidv4();
@@ -64,7 +64,7 @@ app.post("/submit", async (req, res) => {
  });
 
 
-// Route to get ics data from MongoDB, generate new blob and download file
+// Route to retrieve ics data from MongoDB when invite URL is queried (GET request) + Generate new blob to download .ics file
 app.get('/newevent/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 

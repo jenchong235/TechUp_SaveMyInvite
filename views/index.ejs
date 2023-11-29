@@ -84,7 +84,6 @@
     <div id="UrlDisplay" class="m-4" style = "display: none;">
         <h4 class = "mb-4" style = "text-align: center; color:#313D5A;">Invite URL:</h4>
         <div class="input-group mb-3">
-     <!--   <span id="icslink" class="input-group-text text-truncate" style="display: block;"> </span>  -->
             <input id="icslink" type="text" class="form-control" readonly> <!-- eventurl returned from app.js-->
             <div class="input-group-append">
                 <button class="btn btn-dark" type="button" onclick="copyUrl()">Copy</button>
@@ -157,8 +156,6 @@ END:VCALENDAR`;
         var UrlInput = document.getElementById('icslink');
         UrlInput.value = text;
         console.log("value "+UrlInput.value);
-        var event = new Event('change');
-        UrlInput.dispatchEvent(event);
         }
   );
 
@@ -191,7 +188,7 @@ END:VCALENDAR`;
 </script>
 
 <script>
-// Smooth scrolling
+// Smooth scrolling 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
